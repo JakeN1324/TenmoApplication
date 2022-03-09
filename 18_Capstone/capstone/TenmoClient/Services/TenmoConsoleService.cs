@@ -52,10 +52,24 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
-        //public decimal GetBalance(int userId)
-        //{
 
-        //}
+        public void GetBalance(TenmoApiService apiService)
+        {
+            Account userAccount = apiService.GetAccount(apiService.UserId);
 
+            Console.WriteLine($"Your account balance is ${userAccount.Balance}");
+        }
+
+        public void GetUsers(TenmoApiService apiService)
+        {
+            List<ApiUser> users = apiService.GetUsers();
+
+            Console.WriteLine("|------------ Users ------------|");
+            foreach(ApiUser u in users)
+            {
+                Console.WriteLine($"{u.UserId} | {u.Username}");
+            }
+            Console.WriteLine("|-------------------------------|");
+        }
     }
 }

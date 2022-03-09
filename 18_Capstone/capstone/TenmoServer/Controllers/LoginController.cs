@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using TenmoServer.DAO;
 using TenmoServer.Models;
 using TenmoServer.Security;
@@ -65,8 +66,29 @@ namespace TenmoServer.Controllers
             {
                 result = BadRequest(new { message = "An error occurred and user was not created." });
             }
-
+            
             return result;
+        }
+
+        [HttpGet]
+        public ActionResult<List<ReturnUser>> GetUsers()
+        {
+            List<User> users = userDao.GetUsers();
+            List<ReturnUser> returnUsers = new List<ReturnUser>();
+
+            foreach(User u in users)
+            {
+                ReturnUser ru = new ReturnUser();
+                ru.UserId = u.UserId;
+                ru.Username = u.Username;
+                returnUsers.Add(ru);
+            }
+
+            if(returnUsers != null)
+            {
+                return Ok(returnUsers);
+            }
+            return NoContent();
         }
     }
 }
