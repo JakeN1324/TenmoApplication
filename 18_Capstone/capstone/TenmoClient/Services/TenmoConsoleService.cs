@@ -52,7 +52,10 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
+        //public decimal GetBalance(int userId)
+        //{
 
+        //}
 
     }
 }

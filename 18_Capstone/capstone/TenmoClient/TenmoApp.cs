@@ -74,6 +74,9 @@ namespace TenmoClient
             if (menuSelection == 1)
             {
                 // View your current balance
+                Account userAccount = tenmoApiService.GetAccount(tenmoApiService.UserId);
+                
+                Console.WriteLine($"Your account balance is ${userAccount.Balance}");
             }
 
             if (menuSelection == 2)
