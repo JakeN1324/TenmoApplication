@@ -15,16 +15,18 @@ namespace TenmoServer.Controllers
     public class TransferController : ControllerBase
     {
         private readonly ITransferDao transferDao;
+        private readonly IAccountDAO accountDao;
 
-        public TransferController(ITransferDao trDao)
+        public TransferController(ITransferDao trDao, IAccountDAO accDao)
         {
             transferDao = trDao;
+            accountDao = accDao;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Transfer> GetAccount(int transferId)
+        public ActionResult<Transfer> GetTransfer(int id)
         {
-            Transfer transfer = transferDao.GetTransfer(transferId);
+            Transfer transfer = transferDao.GetTransfer(id);
 
             if (transfer != null)
             {
@@ -36,10 +38,10 @@ namespace TenmoServer.Controllers
             }
         }
 
-        [HttpGet()]
-        public ActionResult<Transfer> GetOwnTransfers(int userId)
+        [HttpGet("mytransfers/{id}")]
+        public ActionResult<Transfer> GetOwnTransfers(int id)
         {
-            List<Transfer> transfers = transferDao.GetOwnTransfers(userId);
+            List<Transfer> transfers = transferDao.GetOwnTransfers(id);
 
             if (transfers != null)
             {
@@ -54,7 +56,18 @@ namespace TenmoServer.Controllers
         [HttpPost("add")]
         public ActionResult AddTransfer(Transfer transferToAdd)
         {
-            Transfer transfer = transferDao.AddTransfer(transferToAdd);
+            Account accountFrom = accountDao.GetAccount(transferToAdd.AccountFrom);
+            Account accountTo = accountDao.GetAccount(transferToAdd.AccountTo);
+            decimal accountBalance = accountFrom.Balance;
+            Transfer transfer = null;
+
+            if(accountBalance >= transferToAdd.Amount)
+            {
+                accountDao.UpdateBalance(transferToAdd);
+                transferToAdd.AccountFrom = accountFrom.AccountId;
+                transferToAdd.AccountTo = accountTo.AccountId;
+                transfer = transferDao.AddTransfer(transferToAdd);
+            }
 
             if (transfer != null)
             {
