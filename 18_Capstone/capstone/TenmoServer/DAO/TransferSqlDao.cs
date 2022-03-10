@@ -118,7 +118,62 @@ namespace TenmoServer.DAO
             return GetTransfer(transferId);
         }
 
-        
+        public TransferType GetType(int typeId)
+        {
+            TransferType returnType = new TransferType();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer_type WHERE transfer_type_id = @transfer_type_id", conn);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", typeId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        returnType = GetTypeFromReader(reader);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return returnType;
+        }
+
+        public TransferStatus GetStatus(int statusId)
+        {
+            TransferStatus returnStatus = new TransferStatus();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer_status WHERE transfer_status_id = @transfer_status_id", conn);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", statusId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        returnStatus = GetStatusFromReader(reader);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return returnStatus;
+        }
+
 
         private Transfer GetTransferFromReader(SqlDataReader reader)
         {
@@ -130,6 +185,28 @@ namespace TenmoServer.DAO
                 AccountFrom = Convert.ToInt32(reader["account_from"]),
                 AccountTo = Convert.ToInt32(reader["account_to"]),
                 Amount = Convert.ToDecimal(reader["amount"]),
+            };
+
+            return t;
+        }
+
+        private TransferType GetTypeFromReader(SqlDataReader reader)
+        {
+            TransferType t = new TransferType()
+            {
+                TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]),
+                TypeDescription = Convert.ToString(reader["transfer_type_desc"])
+            };
+
+            return t;
+        }
+
+        private TransferStatus GetStatusFromReader(SqlDataReader reader)
+        {
+            TransferStatus t = new TransferStatus()
+            {
+                TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]),
+                StatusDescription = Convert.ToString(reader["transfer_status_desc"])
             };
 
             return t;

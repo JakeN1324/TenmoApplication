@@ -71,5 +71,58 @@ namespace TenmoClient.Services
             }
             Console.WriteLine("|-------------------------------|");
         }
+
+        public void GetOwnTransfers(TenmoApiService apiService)
+        {
+            List<Transfer> transfers = apiService.GetOwnTransfers(apiService.UserId);
+            List<ApiUser> users = apiService.GetUsers();
+
+            Console.WriteLine("|------------ Your Transfers ------------|");
+            foreach (Transfer t in transfers)
+            {
+                string username = "";
+                foreach (ApiUser user in users)
+                {
+                    if (t.AccountTo == user.UserId)
+                    {
+                        username = user.Username;
+                    }
+                }
+                string fromTo = $"To: {username}";
+                Console.WriteLine($"{t.TransferId} | {fromTo} | ${t.Amount}");
+            }
+            Console.WriteLine("|-------------------------------|");
+        }
+
+        public void GetTransferDetails(TenmoApiService apiService, int transferId)
+        {
+            Transfer transfer = apiService.GetTransfer(transferId);
+            List<ApiUser> users = apiService.GetUsers();
+            string fromName = "";
+            string toName = "";
+
+            foreach (ApiUser user in users)
+            {
+                if (transfer.AccountFrom == user.UserId)
+                {
+                    fromName = user.Username;
+                }
+                else if (transfer.AccountTo == user.UserId)
+                {
+                    toName = user.Username;
+                }
+
+            }
+
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine("Transfer Details");
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine($"Id: {transfer.TransferId}");
+            Console.WriteLine($"From: {fromName}");
+            Console.WriteLine($"To: {toName}");
+            Console.WriteLine($"Type: {apiService.GetType(transfer.TransferTypeId).TypeDescription}");
+            Console.WriteLine($"Status: {apiService.GetStatus(transfer.TransferStatusId).StatusDescription}");
+            Console.WriteLine($"Amount: ${transfer.Amount}");           
+        }
     }
 }

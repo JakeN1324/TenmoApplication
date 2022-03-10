@@ -72,24 +72,20 @@ namespace TenmoClient
             }
 
             if (menuSelection == 1)
-            {
-<<<<<<< HEAD
-                //View your current balance
-                Account userAccount = tenmoApiService.GetAccount(tenmoApiService.UserId);
-
-                Console.WriteLine($"Your account balance is ${userAccount.Balance}");
-
-=======
+            {               
                 // View your current balance
                 console.GetBalance(tenmoApiService);
                 console.Pause();
                 
->>>>>>> be1d598846c6d7349d0f18f6603929874064516c
             }
 
             if (menuSelection == 2)
             {
                 // View your past transfers
+                console.GetOwnTransfers(tenmoApiService);
+                int transferId = console.PromptForInteger("Please enter transfer id to view details(0)");
+                console.GetTransferDetails(tenmoApiService, transferId);
+                console.Pause();
             }
 
             if (menuSelection == 3)
@@ -122,13 +118,35 @@ namespace TenmoClient
         {
             console.GetUsers(tenmoApiService);
             int accountTo = console.PromptForInteger("Id of the user you are sending money to");
+
+            if (accountTo == tenmoApiService.UserId)
+            {
+                console.PrintError("You cannot send money to yourself.");
+                console.Pause();
+                return;
+            }            
             decimal amount = console.PromptForDecimal("Enter amount to send");
+
+            if (amount <= 0)
+            {
+                console.PrintError("Amount to send must be greater than 0.");
+                console.Pause();
+                return;
+            }
+            Account userAccount = tenmoApiService.GetAccount(tenmoApiService.UserId);
+            if (userAccount.Balance < amount)
+            {
+                console.PrintError("Not enough money in balance.");
+                console.Pause();
+                return;
+            }
             Transfer transfer = new Transfer();
             transfer.TransferStatusId = 2;
             transfer.TransferTypeId = 2;
             transfer.AccountFrom = tenmoApiService.UserId;
             transfer.AccountTo = accountTo;
             transfer.Amount = amount;
+            
             tenmoApiService.AddTransfer(transfer);
         }
 

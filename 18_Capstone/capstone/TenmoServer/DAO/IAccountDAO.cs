@@ -8,7 +8,9 @@ namespace TenmoServer.DAO
 {
     public interface IAccountDAO
     {
-        Account GetAccount(int userId);
+        Account GetAccountByUser(int userId);
+        Account GetAccountById(int accountId);
+
         bool UpdateBalance(Transfer transfer);
     }
 }

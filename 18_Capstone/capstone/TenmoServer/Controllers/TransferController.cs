@@ -27,6 +27,10 @@ namespace TenmoServer.Controllers
         public ActionResult<Transfer> GetTransfer(int id)
         {
             Transfer transfer = transferDao.GetTransfer(id);
+            Account accountFrom = accountDao.GetAccountById(transfer.AccountFrom);
+            Account accountTo = accountDao.GetAccountById(transfer.AccountTo);
+            transfer.AccountFrom = accountFrom.UserId;
+            transfer.AccountTo = accountTo.UserId;
 
             if (transfer != null)
             {
@@ -42,6 +46,13 @@ namespace TenmoServer.Controllers
         public ActionResult<Transfer> GetOwnTransfers(int id)
         {
             List<Transfer> transfers = transferDao.GetOwnTransfers(id);
+            foreach (Transfer transfer in transfers)
+            {
+                Account accountFrom = accountDao.GetAccountById(transfer.AccountFrom);
+                Account accountTo = accountDao.GetAccountById(transfer.AccountTo);
+                transfer.AccountFrom = accountFrom.UserId;
+                transfer.AccountTo = accountTo.UserId;
+            }
 
             if (transfers != null)
             {
@@ -56,8 +67,8 @@ namespace TenmoServer.Controllers
         [HttpPost("add")]
         public ActionResult AddTransfer(Transfer transferToAdd)
         {
-            Account accountFrom = accountDao.GetAccount(transferToAdd.AccountFrom);
-            Account accountTo = accountDao.GetAccount(transferToAdd.AccountTo);
+            Account accountFrom = accountDao.GetAccountByUser(transferToAdd.AccountFrom);
+            Account accountTo = accountDao.GetAccountByUser(transferToAdd.AccountTo);
             decimal accountBalance = accountFrom.Balance;
             Transfer transfer = null;
 
@@ -76,6 +87,36 @@ namespace TenmoServer.Controllers
             else
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpGet("type/{id}")]       
+        public ActionResult<TransferType> GetType(int id)
+        {
+            TransferType type = transferDao.GetType(id);
+
+            if (type != null)
+            {
+                return Ok(type);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("status/{id}")]
+        public ActionResult<TransferStatus> GetStatus(int id)
+        {
+            TransferStatus status = transferDao.GetStatus(id);
+
+            if (status != null)
+            {
+                return Ok(status);
+            }
+            else
+            {
+                return NotFound();
             }
         }
     }

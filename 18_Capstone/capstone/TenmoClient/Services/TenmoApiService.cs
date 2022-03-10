@@ -12,14 +12,9 @@ namespace TenmoClient.Services
 
         // Add methods to call api here...
         public Account GetAccount(int userId)
-        {
-<<<<<<< HEAD
-            
-            RestRequest request = new RestRequest($"account/{userId}");
-=======
+        {                     
             string url = $"{ApiUrl}account/{userId}";
             RestRequest request = new RestRequest(url);
->>>>>>> be1d598846c6d7349d0f18f6603929874064516c
             IRestResponse<Account> response = client.Get<Account>(request);
 
             //CheckForError(response);
@@ -47,12 +42,39 @@ namespace TenmoClient.Services
             return response.Data;
         }
 
+        public Transfer GetTransfer(int transferId)
+        {
+            string url = $"{ApiUrl}transfer/{transferId}";
+            RestRequest request = new RestRequest(url);
+            IRestResponse<Transfer> response = client.Get<Transfer>(request);
+
+            return response.Data;
+        }
+
         public Transfer AddTransfer(Transfer transferToAdd)
         {
             string url = $"{ApiUrl}transfer/add";
             RestRequest request = new RestRequest(url);
             request.AddJsonBody(transferToAdd);
             IRestResponse<Transfer> response = client.Post<Transfer>(request);
+
+            return response.Data;
+        }
+
+        public TransferType GetType(int typeId)
+        {
+            string url = $"{ApiUrl}transfer/type/{typeId}";
+            RestRequest request = new RestRequest(url);
+            IRestResponse<TransferType> response = client.Get<TransferType>(request);
+
+            return response.Data;
+        }
+
+        public TransferStatus GetStatus(int statusId)
+        {
+            string url = $"{ApiUrl}transfer/status/{statusId}";
+            RestRequest request = new RestRequest(url);
+            IRestResponse<TransferStatus> response = client.Get<TransferStatus>(request);
 
             return response.Data;
         }

@@ -16,13 +16,9 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public Account GetAccount(int userId)
+        public Account GetAccountByUser(int userId)
         {
-<<<<<<< HEAD
             Account returnAccount = new Account();
-=======
-            Account returnAccount = new Account() ;
->>>>>>> be1d598846c6d7349d0f18f6603929874064516c
 
             try
             {
@@ -32,6 +28,34 @@ namespace TenmoServer.DAO
 
                     SqlCommand cmd = new SqlCommand("SELECT * FROM account WHERE user_id = @user_id", conn);
                     cmd.Parameters.AddWithValue("@user_id", userId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        returnAccount = GetAccountFromReader(reader);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return returnAccount;
+        }
+
+        public Account GetAccountById(int accountId)
+        {
+            Account returnAccount = new Account();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM account WHERE account_id = @account_id", conn);
+                    cmd.Parameters.AddWithValue("@account_id", accountId);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())

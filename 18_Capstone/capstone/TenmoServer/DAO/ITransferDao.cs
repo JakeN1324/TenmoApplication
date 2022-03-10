@@ -11,5 +11,10 @@ namespace TenmoServer.DAO
         Transfer AddTransfer(Transfer transfer);
         Transfer GetTransfer(int transferId);
         List<Transfer> GetOwnTransfers(int ownUserId);
+
+        TransferType GetType(int typeId);
+
+        TransferStatus GetStatus(int statusId);
+
     }
 }
