@@ -73,11 +73,18 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
+<<<<<<< HEAD
                 //View your current balance
                 Account userAccount = tenmoApiService.GetAccount(tenmoApiService.UserId);
 
                 Console.WriteLine($"Your account balance is ${userAccount.Balance}");
 
+=======
+                // View your current balance
+                console.GetBalance(tenmoApiService);
+                console.Pause();
+                
+>>>>>>> be1d598846c6d7349d0f18f6603929874064516c
             }
 
             if (menuSelection == 2)
@@ -93,6 +100,9 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
+                console.GetUsers(tenmoApiService);
+                console.PromptForInteger("Id of the user you are sending money to");
+                
             }
 
             if (menuSelection == 5)

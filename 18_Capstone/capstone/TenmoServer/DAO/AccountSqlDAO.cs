@@ -18,7 +18,11 @@ namespace TenmoServer.DAO
 
         public Account GetAccount(int userId)
         {
+<<<<<<< HEAD
             Account returnAccount = new Account();
+=======
+            Account returnAccount = new Account() ;
+>>>>>>> be1d598846c6d7349d0f18f6603929874064516c
 
             try
             {
@@ -48,6 +52,7 @@ namespace TenmoServer.DAO
         {
             Account a = new Account()
             {
+                AccountId = Convert.ToInt32(reader["account_id"]),
                 UserId = Convert.ToInt32(reader["user_id"]),
                 Balance = Convert.ToDecimal(reader["balance"])
             };
