@@ -48,6 +48,32 @@ namespace TenmoServer.DAO
             return returnAccount;
         }
 
+        public bool UpdateBalance(Transfer transfer)
+        {
+            bool updated = false;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("UPDATE account SET balance = balance - @amount WHERE user_id = @account_from; " +
+                        "UPDATE account SET balance = balance + @amount WHERE user_id = @account_to;", conn);
+                    cmd.Parameters.AddWithValue("@amount", transfer.Amount);
+                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                    cmd.ExecuteNonQuery();
+
+                    updated = true;
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return updated;
+        }
+
         private Account GetAccountFromReader(SqlDataReader reader)
         {
             Account a = new Account()

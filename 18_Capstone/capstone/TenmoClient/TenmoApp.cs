@@ -100,9 +100,7 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
-                console.GetUsers(tenmoApiService);
-                console.PromptForInteger("Id of the user you are sending money to");
-                
+                SendMoney();
             }
 
             if (menuSelection == 5)
@@ -118,6 +116,20 @@ namespace TenmoClient
             }
 
             return true;    // Keep the main menu loop going
+        }
+
+        public void SendMoney()
+        {
+            console.GetUsers(tenmoApiService);
+            int accountTo = console.PromptForInteger("Id of the user you are sending money to");
+            decimal amount = console.PromptForDecimal("Enter amount to send");
+            Transfer transfer = new Transfer();
+            transfer.TransferStatusId = 2;
+            transfer.TransferTypeId = 2;
+            transfer.AccountFrom = tenmoApiService.UserId;
+            transfer.AccountTo = accountTo;
+            transfer.Amount = amount;
+            tenmoApiService.AddTransfer(transfer);
         }
 
         private void Login()

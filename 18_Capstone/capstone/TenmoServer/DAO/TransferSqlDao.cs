@@ -54,8 +54,8 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer t JOIN account a ON t.account_from = a.account_id " +
-                        "AND t.account_to = a.account_id WHERE a.user_id = @user_id", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer WHERE account_from IN(SELECT account_id FROM account WHERE user_id = @user_id) OR " +
+                        "account_to IN(SELECT account_id FROM account WHERE user_id = @user_id); ", conn);
                     cmd.Parameters.AddWithValue("@user_id", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -77,13 +77,15 @@ namespace TenmoServer.DAO
         public Transfer AddTransfer(Transfer transferToAdd)
         {
             Transfer returnTransfer = new Transfer();
+            int transferId;
+
 
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
+                    
                     SqlCommand cmd = new SqlCommand("INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
                         "VALUES (@transfer_status_id, @transfer_type_id, @account_from, @account_to, @amount);", conn);
                     // might need to include transfer_id param
@@ -93,11 +95,14 @@ namespace TenmoServer.DAO
                     cmd.Parameters.AddWithValue("@account_from", transferToAdd.AccountFrom);
                     cmd.Parameters.AddWithValue("@account_to", transferToAdd.AccountTo);
                     cmd.Parameters.AddWithValue("@amount", transferToAdd.Amount);
-                    int transferId = Convert.ToInt32(cmd.ExecuteScalar());
+                    cmd.ExecuteNonQuery();
+
+                    cmd = new SqlCommand("SELECT @@IDENTITY", conn);
+                    transferId = Convert.ToInt32(cmd.ExecuteScalar());
 
                     //cmd = new SqlCommand("SELECT * FROM transfer WHERE transfer_id = @transfer_id");
                     //cmd.Parameters.AddWithValue("@transfer_id", transferId);
-                    //SqlDataReader reader = cmd.ExecuteReader() ;
+                    //SqlDataReader reader = cmd.ExecuteReader();
                     //if (reader.Read())
                     //{
                     //    returnTransfer = GetTransferFromReader(reader);
@@ -109,9 +114,11 @@ namespace TenmoServer.DAO
                 throw;
             }
 
-            //return returnTransfer;
-            return transferToAdd;
+
+            return GetTransfer(transferId);
         }
+
+        
 
         private Transfer GetTransferFromReader(SqlDataReader reader)
         {

@@ -37,5 +37,24 @@ namespace TenmoClient.Services
 
             return response.Data;
         }
+
+        public List<Transfer> GetOwnTransfers(int userId)
+        {
+            string url = $"{ApiUrl}transfer/mytransfers/{userId}";
+            RestRequest request = new RestRequest(url);
+            IRestResponse<List<Transfer>> response = client.Get<List<Transfer>>(request);
+
+            return response.Data;
+        }
+
+        public Transfer AddTransfer(Transfer transferToAdd)
+        {
+            string url = $"{ApiUrl}transfer/add";
+            RestRequest request = new RestRequest(url);
+            request.AddJsonBody(transferToAdd);
+            IRestResponse<Transfer> response = client.Post<Transfer>(request);
+
+            return response.Data;
+        }
     }
 }

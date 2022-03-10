@@ -22,9 +22,9 @@ namespace TenmoServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Account> GetAccount(int userId)
+        public ActionResult<Account> GetAccount(int id)
         {
-            Account account = accountDao.GetAccount(userId);
+            Account account = accountDao.GetAccount(id);
             
             if (account != null)
             {
