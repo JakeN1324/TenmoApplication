@@ -18,7 +18,7 @@ namespace TenmoServer.DAO
 
         public Account GetAccount(int userId)
         {
-            Account returnAccount = null;
+            Account returnAccount = new Account();
 
             try
             {

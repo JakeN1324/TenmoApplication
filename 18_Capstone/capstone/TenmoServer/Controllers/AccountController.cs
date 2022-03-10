@@ -18,7 +18,7 @@ namespace TenmoServer.Controllers
 
         public AccountController(IAccountDAO accDao)
         {
-            accountDao = accDao;
+            this.accountDao = accDao;
         }
 
         [HttpGet("{id}")]
