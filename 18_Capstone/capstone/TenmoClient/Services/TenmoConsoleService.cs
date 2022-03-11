@@ -60,7 +60,7 @@ namespace TenmoClient.Services
             Console.WriteLine($"Your account balance is ${userAccount.Balance}");
         }
 
-        public void GetUsers(TenmoApiService apiService)
+        public List<ApiUser> GetUsers(TenmoApiService apiService)
         {
             List<ApiUser> users = apiService.GetUsers();
 
@@ -70,9 +70,11 @@ namespace TenmoClient.Services
                 Console.WriteLine($"{u.UserId} | {u.Username}");
             }
             Console.WriteLine("|-------------------------------|");
+
+            return users;
         }
 
-        public void GetOwnTransfers(TenmoApiService apiService)
+        public List<Transfer> GetOwnTransfers(TenmoApiService apiService)
         {
             List<Transfer> transfers = apiService.GetOwnTransfers(apiService.UserId);
             List<ApiUser> users = apiService.GetUsers();
@@ -92,6 +94,8 @@ namespace TenmoClient.Services
                 Console.WriteLine($"{t.TransferId} | {fromTo} | ${t.Amount}");
             }
             Console.WriteLine("|-------------------------------|");
+
+            return transfers;
         }
 
         public void GetTransferDetails(TenmoApiService apiService, int transferId)
@@ -112,7 +116,7 @@ namespace TenmoClient.Services
                     toName = user.Username;
                 }
 
-            }
+            }       
 
             Console.WriteLine("--------------------------------");
             Console.WriteLine("Transfer Details");

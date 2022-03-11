@@ -82,10 +82,11 @@ namespace TenmoClient
             if (menuSelection == 2)
             {
                 // View your past transfers
-                console.GetOwnTransfers(tenmoApiService);
-                int transferId = console.PromptForInteger("Please enter transfer id to view details(0)");
-                console.GetTransferDetails(tenmoApiService, transferId);
-                console.Pause();
+                //console.GetOwnTransfers(tenmoApiService);
+                //int transferId = console.PromptForInteger("Please enter transfer id to view details(0)");
+                //console.GetTransferDetails(tenmoApiService, transferId);
+                //console.Pause();
+                ViewTransfers();
             }
 
             if (menuSelection == 3)
@@ -116,9 +117,29 @@ namespace TenmoClient
 
         public void SendMoney()
         {
-            console.GetUsers(tenmoApiService);
-            int accountTo = console.PromptForInteger("Id of the user you are sending money to");
+            List<ApiUser> users = console.GetUsers(tenmoApiService);
+            bool validUser = false;
+            int accountTo = console.PromptForInteger("Id of the user you are sending money to(0)");
 
+            if (accountTo == 0)
+            {
+                return;
+            }
+
+            foreach (ApiUser user in users)
+            {
+                if (accountTo == user.UserId)
+                {
+                    validUser = true;
+                }
+            }
+
+            if (!validUser)
+            {
+                console.PrintError("Invalid user Id.");
+                console.Pause();
+                return;
+            }
             if (accountTo == tenmoApiService.UserId)
             {
                 console.PrintError("You cannot send money to yourself.");
@@ -148,6 +169,31 @@ namespace TenmoClient
             transfer.Amount = amount;
             
             tenmoApiService.AddTransfer(transfer);
+        }
+
+        public void ViewTransfers()
+        {           
+            List<Transfer> transfers = console.GetOwnTransfers(tenmoApiService);
+            List<int> transferIds = new List<int>();
+            foreach (Transfer t in transfers)
+            {
+                transferIds.Add(t.TransferId);
+            }
+
+            int transferId = console.PromptForInteger("Please enter transfer id to view details(0)");
+
+            if (transferId == 0)
+            {
+                return;
+            }
+            else if (!transferIds.Contains(transferId))
+            {
+                console.PrintError("Invalid transfer Id. Choose from your list of transfers.");
+                console.Pause();
+                return;
+            }
+            console.GetTransferDetails(tenmoApiService, transferId);
+            console.Pause();
         }
 
         private void Login()
